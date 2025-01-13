@@ -139,8 +139,7 @@ services:
     depends_on:
       - redpanda-0
       - db2server
-      - redpanda-console:
-          condition: service_started
+      - redpanda-console
     healthcheck:
       test: ["CMD-SHELL", "if echo $(curl -s http://debezium-oracle-redpanda-kafka:8083/) | grep -q '{\"version\":'; then exit 0; else exit 1; fi"]
       interval: 10s
