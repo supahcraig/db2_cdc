@@ -1,0 +1,166 @@
+#version: '3.7'
+
+volumes:
+  local_pgdata_1:
+  redpanda-0:
+
+networks:
+  cdc_network:
+    driver: bridge
+
+services:
+  redpanda-0:
+    command:
+      - redpanda
+      - start
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      # Address the broker advertises to clients that connect to the Kafka API.
+      # Use the internal addresses to connect to the Redpanda brokers'
+      # from inside the same Docker network.
+      # Use the external addresses to connect to the Redpanda brokers'
+      # from outside the Docker network.
+      - --advertise-kafka-addr internal://redpanda-0:9092,external://localhost:19092
+      - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
+      # Address the broker advertises to clients that connect to the HTTP Proxy.
+      - --advertise-pandaproxy-addr internal://redpanda-0:8082,external://localhost:18082
+      - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081
+      # Redpanda brokers use the RPC API to communicate with each other internally.
+      - --rpc-addr redpanda-0:33145
+      - --advertise-rpc-addr redpanda-0:33145
+      # Mode dev-container uses well-known configuration properties for development in containers.
+      - --mode dev-container
+      # Tells Seastar (the framework Redpanda uses under the hood) to use 1 core on the system.
+      - --smp 1
+      - --default-log-level=info
+    image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
+    container_name: redpanda-0
+    networks:
+      - cdc_network
+    ports:
+      - 18081:18081
+      - 18082:18082
+      - 19092:19092
+      - 19644:9644
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9644/v1/status/ready || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redpanda-console:
+    container_name: redpanda-console
+    image: docker.redpanda.com/redpandadata/console:v2.7.1
+    networks:
+      - cdc_network
+    entrypoint: /bin/sh
+    command: -c 'echo "$$CONSOLE_CONFIG_FILE" > /tmp/config.yml; /app/console'
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["redpanda-0:9092"]
+          schemaRegistry:
+            enabled: true
+            urls: ["http://redpanda-0:8081"]
+        redpanda:
+          adminApi:
+            enabled: true
+            urls: ["http://redpanda-0:9644"]
+        connect:
+          enabled: true
+          clusters:
+            - name: "DebeziumConnect"
+              url: "http://debezium-db2-kafka-connect:8083"  # The URL where Kafka Connect is running
+          #The default for clusters is an empty array. To start Redpanda Console,
+          #specify at least one cluster as soon as you enable Kafka connect.
+          #clusters: []
+            #- name: xy
+              #url: http://my-cluster:8083
+              #tls:
+                # Trusted certificates are still allowed if TLS is not enabled.
+                #enabled: false
+                #caFilepath:
+                #certFilepath:
+                #keyFilepath:
+                #insecureSkipTlsVerify: false
+              #username:
+              # Password can also be set using the --connect.clusters.i.password flag (i to be replaced with the array index).
+              #password:
+              # Token can also be set using the --connect.clusters.i.token flag (i to be replaced with the array index).
+              #token:
+          # Used to test cluster connectivity.
+          #connectTimeout: 15s
+          # Overall REST timeout.
+          #readTimeout: 60s
+          # Timeout for REST requests.
+          #requestTimeout: 6s
+    ports:
+      - 8080:8080
+    depends_on:
+      redpanda-0:
+        condition: service_healthy
+
+
+  db2server:
+    container_name: db2server
+    build:
+      context: ./debezium-db2-init/db2server
+    privileged: True
+    ports:
+     - 50000:50000
+    environment:
+     - LICENSE=accept
+     - DBNAME=TESTDB
+     - DB2INST1_PASSWORD=password
+    volumes:
+     - ./db2data:/database
+    networks:
+      - redpanda_network
+
+  debezium-kafka-connect:
+    image: debezium/connect-db2:${DEBEZIUM_VERSION}
+    container_name: debezium-kafka-connect
+    build:
+      context: .db2connect
+      args:
+        DEBEZIUM_VERSION: 2.6
+    networks:
+      - cdc_network
+    ports:
+     - 5005:5005
+     - 1976:1976
+     - 8083:8083
+    environment:
+     - BOOTSTRAP_SERVERS=redpanda-0:9092
+     - GROUP_ID=1
+     - CONFIG_STORAGE_TOPIC=my_connect_configs
+     - OFFSET_STORAGE_TOPIC=my_connect_offsets
+     - STATUS_STORAGE_TOPIC=my_connect_statuses
+    depends_on:
+      - redpanda-0
+      - db2server
+      - redpanda-console:
+          condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "if echo $(curl -s http://debezium-oracle-redpanda-kafka:8083/) | grep -q '{\"version\":'; then exit 0; else exit 1; fi"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  configure-debezium-oracle-source:
+    image: curlimages/curl:latest
+    container_name: configure-debezium-oracle-source
+    networks:
+      - cdc_network
+    command: >
+      curl -X POST -H "Content-Type: application/json" --data @/_register-oracle-source.json http://debezium-oracle-redpanda-kafka:8083/connectors
+    volumes:
+      - ./_register-oracle-source.json:/_register-oracle-source.json
+    restart: 'no'
+    depends_on:
+      debezium-oracle-redpanda-kafka:
+        condition: service_healthy
+      oracle-db-source:
+        condition: service_healthy
+
+ 
