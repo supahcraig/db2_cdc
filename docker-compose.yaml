@@ -70,7 +70,7 @@ services:
           enabled: true
           clusters:
             - name: "DebeziumConnect"
-              url: "http://debezium-db2-kafka-connect:8083"  # The URL where Kafka Connect is running
+              url: "http://debezium-kafka-connect:8083"  # The URL where Kafka Connect is running
           #The default for clusters is an empty array. To start Redpanda Console,
           #specify at least one cluster as soon as you enable Kafka connect.
           #clusters: []
