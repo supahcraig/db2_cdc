@@ -16,7 +16,7 @@ You'll want something like an Ubuntu server (version 22 or greater), since the b
 Clone this repo into your EC2 instance, and cd into the project directory
 
 ```bash
-git clone
+git clone https://github.com/supahcraig/db2_cdc.git
 cd db2_cdc
 ```
 
