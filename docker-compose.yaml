@@ -43,6 +43,7 @@ services:
       timeout: 5s
       retries: 5
 
+
   redpanda-console:
     container_name: redpanda-console
     image: docker.redpanda.com/redpandadata/console:v2.7.1
@@ -94,6 +95,7 @@ services:
       timeout: 10s
       retries: 5
 
+
   debezium-kafka-connect:
     container_name: debezium-kafka-connect
     image: debezium/connect-db2:2.6
@@ -122,6 +124,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 20
+
 
   configure-debezium-db2-source:
     container_name: configure-debezium-db2-source
