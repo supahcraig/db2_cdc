@@ -115,7 +115,7 @@ services:
     volumes:
      - ./db2data:/database
     networks:
-      - redpanda_network
+      - cdc_network
 
   debezium-kafka-connect:
     image: debezium/connect-db2:${DEBEZIUM_VERSION}
@@ -141,25 +141,25 @@ services:
       - db2server
       - redpanda-console
     healthcheck:
-      test: ["CMD-SHELL", "if echo $(curl -s http://debezium-oracle-redpanda-kafka:8083/) | grep -q '{\"version\":'; then exit 0; else exit 1; fi"]
+      test: ["CMD-SHELL", "if echo $(curl -s http://debezium-kafka-connect:8083/) | grep -q '{\"version\":'; then exit 0; else exit 1; fi"]
       interval: 10s
       timeout: 5s
       retries: 20
 
-  configure-debezium-oracle-source:
+  configure-debezium-db2-source:
     image: curlimages/curl:latest
-    container_name: configure-debezium-oracle-source
+    container_name: configure-debezium-db2-source
     networks:
       - cdc_network
     command: >
-      curl -X POST -H "Content-Type: application/json" --data @/_register-oracle-source.json http://debezium-oracle-redpanda-kafka:8083/connectors
+      curl -X POST -H "Content-Type: application/json" --data @/_register-db2-source.json http://debezium-kafka-connect:8083/connectors
     volumes:
-      - ./_register-oracle-source.json:/_register-oracle-source.json
+      - ./_register-db2-source.json:/_register-db2-source.json
     restart: 'no'
     depends_on:
-      debezium-oracle-redpanda-kafka:
+      debezium-kafka-connect:
         condition: service_healthy
-      oracle-db-source:
+      db2server:
         condition: service_healthy
 
  
