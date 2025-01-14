@@ -3,11 +3,28 @@ Creates a DB2 instances enabled for CDC, and pushes those CDC events to Redpanda
 
 ## Pre-requisites
 
-You'll want something like an Ubuntu server (version 22 or greater), since the base docker image isn't available for macos.
+You'll want something like an Ubuntu server (version 22 or greater), since the base docker image isn't available for macos.  I used a c5.xlarge with a 30GB gp3 volume.  The default 8GB volume will not be big enough to build the docker images.
+
+* Docker
+* docker-compose
+* git (to clone the repo)
 
 
 
+## Spin up the Docker environment
 
+Clone this repo into your EC2 instance, and cd into the project directory
+
+```bash
+git clone
+cd db2_cdc
+```
+
+Then bring up the docker-compose environment:
+
+```bash
+sudo docker-compose up --build
+```
 
 
 
@@ -30,7 +47,7 @@ echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
+sudo apt-get update -y
 ```
 
 Then actually install Docker:
