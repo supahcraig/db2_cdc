@@ -30,7 +30,7 @@ cd db2_cdc
 Then bring up the docker-compose environment:
 
 ```bash
-sudo docker-compose up --build
+docker-compose up --build -V
 ```
 
 OR more simply use the `up` alias which will bring up the compose while simultaneously building the docker images.
@@ -71,14 +71,10 @@ sudo apt-get update -y
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo apt-get install -y docker-compose
 
+sudo usermod -aG docker ubuntu
+newgrp docker
 ```
 
-Then actually install Docker:
-
-```bash
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-sudo apt-get install -y docker-compose
-```
 
 ---
 
