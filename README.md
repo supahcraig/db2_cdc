@@ -7,7 +7,7 @@ You'll want something like an Ubuntu server (version 22 or greater), since the b
 
 * Docker
 * docker-compose
-* git (to clone the repo)
+* git (to clone this repository)
 
 
 
