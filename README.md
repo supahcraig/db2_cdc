@@ -16,7 +16,6 @@ You'll want something like an Ubuntu server (version 22 or greater), since the b
 Run this to simplify some of the docker commands we're going to be using:
 
 ```bash
-cd XE
 source env.sh
 ```
 
