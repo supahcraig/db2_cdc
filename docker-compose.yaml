@@ -116,6 +116,12 @@ services:
      - ./db2data:/database
     networks:
       - cdc_network
+    healthcheck:
+      # su - db2inst1 ensures we run db2 commands under the DB2 instance user
+      test: ["CMD", "su", "-", "db2inst1", "-c", "db2 connect to TESTDB && db2 \"select 1 from sysibm.sysdummy1\""]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   debezium-kafka-connect:
     image: debezium/connect-db2
@@ -156,7 +162,7 @@ services:
     command: >
       curl -X POST -H "Content-Type: application/json" --data @/_register-db2-source.json http://debezium-kafka-connect:8083/connectors
     volumes:
-      - ./_register-db2-source.json:/_register-db2-source.json
+      - ./db2connect/_register-db2-source.json:/_register-db2-source.json
     restart: 'no'
     depends_on:
       debezium-kafka-connect:
