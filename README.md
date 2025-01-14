@@ -13,6 +13,14 @@ You'll want something like an Ubuntu server (version 22 or greater), since the b
 
 ## Spin up the Docker environment
 
+Run this to simplify some of the docker commands we're going to be using:
+
+```bash
+cd XE
+source env.sh
+```
+
+
 Clone this repo into your EC2 instance, and cd into the project directory
 
 ```bash
@@ -24,6 +32,18 @@ Then bring up the docker-compose environment:
 
 ```bash
 sudo docker-compose up --build
+```
+
+OR more simply use the `up` alias which will bring up the compose while simultaneously building the docker images.
+
+```bash
+up
+```
+
+Similarly `down` will tear down the environment and delete the volumes.
+
+```bash
+down
 ```
 
 
