@@ -11,6 +11,9 @@ You'll want something like an Ubuntu server (version 22 or greater), since the b
 * docker-compose
 * git (to clone this repository)
 
+_See the appendix below for instructions on how to install Docker etc on Ubuntu._
+
+---
 
 ## Spin up the Docker environment
 
