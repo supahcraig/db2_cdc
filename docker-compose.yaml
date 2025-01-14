@@ -104,7 +104,7 @@ services:
   db2server:
     container_name: db2server
     build:
-      context: ./debezium-db2-init/db2server
+      context: ./db2server
     privileged: True
     ports:
      - 50000:50000
@@ -118,10 +118,10 @@ services:
       - cdc_network
 
   debezium-kafka-connect:
-    image: debezium/connect-db2:${DEBEZIUM_VERSION}
+    image: debezium/connect-db2
     container_name: debezium-kafka-connect
     build:
-      context: .db2connect
+      context: ./db2connect
       args:
         DEBEZIUM_VERSION: 2.6
     networks:
@@ -141,7 +141,9 @@ services:
       - db2server
       - redpanda-console
     healthcheck:
-      test: ["CMD-SHELL", "if echo $(curl -s http://debezium-kafka-connect:8083/) | grep -q '{\"version\":'; then exit 0; else exit 1; fi"]
+      test:
+        - CMD-SHELL
+        - "curl -s http://debezium-kafka-connect:8083/ | grep -q '{\"version\":' || exit 1"
       interval: 10s
       timeout: 5s
       retries: 20
