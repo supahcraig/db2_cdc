@@ -49,10 +49,29 @@ down
 
 From a new terminal window...
 
-1.  Drop into the db2server container shell:  `docker exec -it db2server /bin/bash`
-2.  Switch to the db2inst1 user:  `su - db2inst1`
-3.  Connect to your testdb database:  `db2 connect to testdb user db2inst1 using password`
-4.  Run a simple query on one of the sample tables:  `SELECT * FROM CUSTOMERS`
+1.  Drop into the db2server container shell:
+
+```bash
+docker exec -it db2server /bin/bash`
+```
+
+2.  Switch to the db2inst1 user:
+
+```bash
+su - db2inst1`
+```
+
+3.  Connect to your testdb database:
+
+```
+db2 connect to testdb user db2inst1 using password`
+```
+
+4.  Run a simple query on one of the sample tables:
+```sql
+SELECT * FROM CUSTOMERS
+```
+
 
 You should see 4 rows:
 
@@ -100,6 +119,8 @@ DB20000I  The SQL command completed successfully.
 INSERT INTO DB2INST1.CUSTOMERS (FIRST_name, last_name, email) VALUES ('John', 'Bonham', 'circles@zep.com')
 DB20000I  The SQL command completed successfully.
 ```
+
+## Verify the CDC output
 
 Now go back to the Redpanda Console...
 
