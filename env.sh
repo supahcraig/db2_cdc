@@ -1,6 +1,5 @@
 echo 'preparing the environment...'
 
-chmod 777 ./pgadmin-data
 
 alias up='docker compose up --build'
 alias down='docker compose down --volumes'
