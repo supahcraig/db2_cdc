@@ -11,6 +11,7 @@ ADD dbsetup.sh /asncdctools/src
 ADD startup-agent.sql /asncdctools/src
 ADD startup-cdc-demo.sql /asncdctools/src
 ADD inventory.sql /asncdctools/src
+ADD insert.sql /asncdctools/src
 ADD asncdc.c /asncdctools/src
 
 RUN mkdir /var/custom && \
