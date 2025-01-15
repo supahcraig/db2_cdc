@@ -92,7 +92,7 @@ ID        FIRST_NAME            LAST_NAME             EMAIL
 2.  On the Overview tab, you should see a green check next to the lone broker in the BROKER DETAILS section
 3.  On the Connectors tab, navigate to Kafka Connect
 4.  Under Clusters you should see `DebeziumConnect`
-5.  Clicking on the Connectors sub-tab, you should see the `inventory-connector` connector.  Click on it.
+5.  Clicking on the Connectors sub-tab, you should see the `db2-debezium-db2-source` connector.  Click on it.
 6.  It should have a green check and say Running, but it might not.
 7.  If it is failed, simply click the restart button (ignore any alerts about permissions)
 8.  It should now say Running.
