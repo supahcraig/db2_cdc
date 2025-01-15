@@ -101,6 +101,8 @@ services:
     image: debezium/connect-db2:2.6
     build:
       context: ./db2connect
+      args:
+        DEBEZIUM_VERSION: 2.6
     networks:
       - cdc_network
     ports:
