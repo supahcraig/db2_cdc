@@ -85,7 +85,7 @@ ID        FIRST_NAME            LAST_NAME             EMAIL
 Again from your DB2 shell...
 
 1.  If you're still in the db2 console (i.e. you see the `db2 => ` prompt) type  `quit` to return to the shell prompt
-2.  Execute a series of insert statements: `db2 -tvf insert.sql`, which should return output like this:
+2.  Execute a series of insert statements: `db2 -tvf /asncdc/src/insert.sql`, which should return output like this:
 
 ```sql
 INSERT INTO DB2INST1.CUSTOMERS (FIRST_name, last_name, email) VALUES ('Robert', 'Plant', 'feather@zep.com')
