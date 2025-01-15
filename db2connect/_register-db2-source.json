@@ -1,5 +1,5 @@
 {
-    "name": "inventory-connector",
+    "name": "db2-debezium-db2-source",
     "config": {
         "connector.class" : "io.debezium.connector.db2.Db2Connector",
         "tasks.max" : "1",
