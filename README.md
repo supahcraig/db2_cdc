@@ -58,16 +58,22 @@ docker exec -it db2server /bin/bash`
 2.  Switch to the db2inst1 user:
 
 ```bash
-su - db2inst1`
+su - db2inst1
 ```
 
-3.  Connect to your testdb database:
+3.  Connect to your testdb database (`password` is the actual password here)
 
 ```
-db2 connect to testdb user db2inst1 using password`
+db2 connect to testdb user db2inst1 using password
 ```
 
-4.  Run a simple query on one of the sample tables:
+4.  Use the db2 cli:
+
+```bash
+db2
+```
+
+5.  Run a simple query on one of the sample tables:
 ```sql
 SELECT * FROM CUSTOMERS
 ```
