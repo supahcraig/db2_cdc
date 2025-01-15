@@ -73,6 +73,13 @@ db2 connect to testdb user db2inst1 using password
 db2
 ```
 
+You should get the db2 cli prompt:
+
+```bash
+db2 =>
+```
+
+
 5.  Run a simple query on one of the sample tables:
 ```sql
 SELECT * FROM CUSTOMERS
